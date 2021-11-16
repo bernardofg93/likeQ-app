@@ -8,10 +8,11 @@ const homeStyles = StyleSheet.create({
         alignItems: 'center'
     },
     titleApp: {
-        fontSize: 45,
+        fontSize: 55,
         color: '#000',
-        fontWeight: "bold"
-    }
+        fontFamily: 'Cabin-Regular'
+    },
+    
 });
 
 export default homeStyles;
