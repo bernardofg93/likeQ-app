@@ -38,8 +38,7 @@ export const ListStores = () => {
         </SafeAreaView>
       );
     }
-
-
+    
     const styles = StyleSheet.create({
         container: {
           flex: 1,

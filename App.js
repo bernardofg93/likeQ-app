@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 //Components
 import { ListStores } from './app/components/ListStores';
 import { Home } from './app/components/Home';
+import { BussinesScreen } from './app/components/BussinesScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,14 @@ const App = () => {
                     options={{
                         title:
                             'Negocios'
+                    }}
+                />
+                <Stack.Screen
+                    name="Negocio"
+                    component={BussinesScreen}
+                    options={{
+                        title:
+                            'Negocio'
                     }}
                 />
             </Stack.Navigator>

@@ -11,7 +11,7 @@ export const Home = () => {
         <View style={homeStyles.container}>
             <Text style={homeStyles.titleApp}> like Q </Text>
             <TouchableOpacity
-                onPress={() => navigation.navigate('Negocios')}
+                onPress={() => navigation.navigate('Negocio')}
             >
                 <Text>Bienvenido</Text>
             </TouchableOpacity>
