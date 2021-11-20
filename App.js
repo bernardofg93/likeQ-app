@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ListStores } from './app/components/ListStores';
 import { Home } from './app/components/Home';
 import { BussinesScreen } from './app/components/BussinesScreen';
+import { AdminScreen } from './app/components/AdminScreen';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +42,14 @@ const App = () => {
                     options={{
                         title:
                             'Negocio'
+                    }}
+                />
+                <Stack.Screen
+                    name="Administrador"
+                    component={AdminScreen}
+                    options={{
+                        title:
+                            'Administrador'
                     }}
                 />
             </Stack.Navigator>

@@ -1,27 +1,44 @@
 import React, { useState, useEffect } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import bussinesScreenStyles from '../styles/bussinesScreenStyles';
+import { WaitingQueueComponent } from './WaitingQueueComponent';
 
 export const BussinesScreen = () => {
 
     const [yourTurn, setYourTurn] = useState();
     const [titleButton, setTitleButton] = useState('Pedir Turno');
-    const [waitTurn, setWaitTurn] = useState(157);
+    const [waitTurn, setWaitTurn] = useState(44);
+    const [label, setLabel] = useState('Turnos por esperar');
+
 
     const getTurn = () => {
-        let newTurn = waitTurn + 1;
-        setYourTurn(newTurn);
-        setTitleButton('Cancelar Turno');
-        showAlert();
+        if(titleButton === 'Pedir Turno'){
+            let newTurn = waitTurn + 1;
+            setYourTurn(newTurn);
+            setTitleButton('Cancelar Turno');
+        } else {
+            showAlert();
+        }
+    }
+
+    const cancelTurn = () => {
+        let newTurn = waitTurn - 1;
+        setTitleButton('Pedir Turno');
+        setYourTurn('- -');
     }
 
     const showAlert = () => {
         Alert.alert(
-            'Error...',
-            'Hubo algun error',
+            'Atencion',
+            'Desea cancelar su turno?',
             [
-                {text: 'OK'}
-            ]
+                {
+                    text: 'Si',
+                    onPress: () => cancelTurn()
+                },
+                {text: 'No'}
+            ],
+
         )
     }
 
@@ -32,14 +49,13 @@ export const BussinesScreen = () => {
                     <Text style={bussinesScreenStyles.titleScreen}>Este negocio tiene aproximadamente 20</Text>
                     <Text style={bussinesScreenStyles.titleScreen}>minutos de espera</Text>
 
-                    <View style={bussinesScreenStyles.boxTurn}>
-                        <Text style={bussinesScreenStyles.titleTurn}>
-                            Turnos por esperar
-                        </Text>
-                        <Text style={bussinesScreenStyles.numberTurn}>
-                            {waitTurn}
-                        </Text>
-                    </View>
+                    <WaitingQueueComponent
+                    label = {label}
+                    waitTurn = {waitTurn}
+                    styleBox = {bussinesScreenStyles.boxTurn}
+                    styleTitle = {bussinesScreenStyles.titleTurn}
+                    styleNumber = {bussinesScreenStyles.numberTurn}
+                    />
 
                     <View style={bussinesScreenStyles.boxTurn}>
                         <Text style={bussinesScreenStyles.titleTurn}>
