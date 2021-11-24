@@ -4,6 +4,8 @@ function reducer(state = 0, action) {
             return action.payload
         case 'REMOVE_ACTUAL_TURN':
             return state > 0 ? state -1 : 0
+        case 'INCREASE_CURRENT_TURN':
+            return state+1
         case 'REFRESH_TURNS':
             return 0
         default:
