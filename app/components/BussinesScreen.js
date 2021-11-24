@@ -14,6 +14,7 @@ export const BussinesScreen = () => {
     })
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
+    const [myTurn, setMyTurn] = useState(0)
 
 
     const getTurn = () => {
@@ -21,6 +22,7 @@ export const BussinesScreen = () => {
             dispatch({
                 type: 'INCREASE_WAITING_QUEUE'
             })
+            setMyTurn(waitingQueue+2)
             setTitleButton('Cancelar Turno');
         } else {
             showAlert();
@@ -31,6 +33,7 @@ export const BussinesScreen = () => {
         dispatch({
             type: 'TO_DISCOUNT_A_WAITING_QUEUE'
         })
+        setMyTurn(0)
         setTitleButton('Pedir Turno');
     }
 
@@ -58,7 +61,7 @@ export const BussinesScreen = () => {
 
                     <WaitingQueueComponent
                         label = {label}
-                        waitTurn = {currentTurn}
+                        waitTurn = {waitingQueue}
                         styleBox = {bussinesScreenStyles.boxTurn}
                         styleTitle = {bussinesScreenStyles.titleTurn}
                         styleNumber = {bussinesScreenStyles.numberTurn}
@@ -69,7 +72,7 @@ export const BussinesScreen = () => {
                             Tu turno
                         </Text>
                         <Text style={bussinesScreenStyles.numberTurn}>
-                            {currentTurn || '- -'}
+                            {myTurn || '- -'}
                         </Text>
                     </View>
 
