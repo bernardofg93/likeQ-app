@@ -17,7 +17,7 @@ export const AdminScreen = () => {
 
 
     const callTurn = () => {
-        if(!!!currentTurn){
+        if(currentTurn >= waitingQueue){
             showValidationAlert();
         } else {
             updateCurrentTurn();
@@ -25,6 +25,9 @@ export const AdminScreen = () => {
     }
 
     const updateCurrentTurn = () => {
+        dispatch({
+            type: 'TO_DISCOUNT_A_WAITING_QUEUE'
+        })
         dispatch({
             type: 'INCREASE_CURRENT_TURN'
         })
@@ -66,7 +69,7 @@ export const AdminScreen = () => {
                     <TouchableOpacity
                         style={adminScreenStyles.callTurn}
                         onPress={callTurn}
-                        disabled={!!!currentTurn}
+                        disabled={currentTurn >= waitingQueue}
                     >
                         <Text style={adminScreenStyles.callTurnTxt}>
                             {titleButton}
