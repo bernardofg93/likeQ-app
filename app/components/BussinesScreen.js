@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import bussinesScreenStyles from '../styles/bussinesScreenStyles';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const BussinesScreen = () => {
 
     const [yourTurn, setYourTurn] = useState();
     const [titleButton, setTitleButton] = useState('Pedir Turno');
     const [waitTurn, setWaitTurn] = useState(44);
+    const turnsToWait = useSelector(state => state.waitingQueue)
+    const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
 
 
@@ -50,11 +53,11 @@ export const BussinesScreen = () => {
                     <Text style={bussinesScreenStyles.titleScreen}>minutos de espera</Text>
 
                     <WaitingQueueComponent
-                    label = {label}
-                    waitTurn = {waitTurn}
-                    styleBox = {bussinesScreenStyles.boxTurn}
-                    styleTitle = {bussinesScreenStyles.titleTurn}
-                    styleNumber = {bussinesScreenStyles.numberTurn}
+                        label = {label}
+                        waitTurn = {waitTurn}
+                        styleBox = {bussinesScreenStyles.boxTurn}
+                        styleTitle = {bussinesScreenStyles.titleTurn}
+                        styleNumber = {bussinesScreenStyles.numberTurn}
                     />
 
                     <View style={bussinesScreenStyles.boxTurn}>
@@ -62,7 +65,7 @@ export const BussinesScreen = () => {
                             Tu turno
                         </Text>
                         <Text style={bussinesScreenStyles.numberTurn}>
-                            {yourTurn ? yourTurn : '- -'}
+                            {yourTurn || '- -'}
                         </Text>
                     </View>
 

@@ -44,11 +44,11 @@ export const AdminScreen = () => {
             <ScrollView style={adminScreenStyles.scroll}>
                 <View style={adminScreenStyles.content}>
                     <WaitingQueueComponent
-                    label = {label}
-                    waitTurn = {waitTurn}
-                    styleBox = {adminScreenStyles.boxTurn}
-                    styleTitle = {adminScreenStyles.titleTurn}
-                    styleNumber = {adminScreenStyles.numberTurn}
+                        label = {label}
+                        waitTurn = {waitTurn}
+                        styleBox = {adminScreenStyles.boxTurn}
+                        styleTitle = {adminScreenStyles.titleTurn}
+                        styleNumber = {adminScreenStyles.numberTurn}
                     />
                     <View style={adminScreenStyles.boxTurn}>
                         <Text style={adminScreenStyles.titleTurn}>
