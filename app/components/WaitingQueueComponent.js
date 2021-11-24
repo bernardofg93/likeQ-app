@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { useSelector } from 'react-redux';
 
 export const WaitingQueueComponent = (props) => {
-    const turnsToWait = useSelector(state => state.waitingQueue)
     return (
         <>
             <View style={props.styleBox}>
@@ -11,7 +9,7 @@ export const WaitingQueueComponent = (props) => {
                     {props.label}
                 </Text>
                 <Text style={props.styleNumber}>
-                    {turnsToWait}
+                    {props.waitTurn}
                 </Text>
             </View>
         </>

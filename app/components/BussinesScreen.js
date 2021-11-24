@@ -5,19 +5,22 @@ import { WaitingQueueComponent } from './WaitingQueueComponent';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const BussinesScreen = () => {
-
-    const [yourTurn, setYourTurn] = useState();
     const [titleButton, setTitleButton] = useState('Pedir Turno');
-    const [waitTurn, setWaitTurn] = useState(44);
-    const turnsToWait = useSelector(state => state.waitingQueue)
+    const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
+        return {
+            waitingQueue,
+            currentTurn
+        }
+    })
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
 
 
     const getTurn = () => {
         if(titleButton === 'Pedir Turno'){
-            let newTurn = waitTurn + 1;
-            setYourTurn(newTurn);
+            dispatch({
+                type: 'INCREASE_WAITING_QUEUE'
+            })
             setTitleButton('Cancelar Turno');
         } else {
             showAlert();
@@ -25,9 +28,10 @@ export const BussinesScreen = () => {
     }
 
     const cancelTurn = () => {
-        let newTurn = waitTurn - 1;
+        dispatch({
+            type: 'TO_DISCOUNT_A_WAITING_QUEUE'
+        })
         setTitleButton('Pedir Turno');
-        setYourTurn('- -');
     }
 
     const showAlert = () => {
@@ -54,7 +58,7 @@ export const BussinesScreen = () => {
 
                     <WaitingQueueComponent
                         label = {label}
-                        waitTurn = {waitTurn}
+                        waitTurn = {currentTurn}
                         styleBox = {bussinesScreenStyles.boxTurn}
                         styleTitle = {bussinesScreenStyles.titleTurn}
                         styleNumber = {bussinesScreenStyles.numberTurn}
@@ -65,7 +69,7 @@ export const BussinesScreen = () => {
                             Tu turno
                         </Text>
                         <Text style={bussinesScreenStyles.numberTurn}>
-                            {yourTurn || '- -'}
+                            {currentTurn || '- -'}
                         </Text>
                     </View>
 

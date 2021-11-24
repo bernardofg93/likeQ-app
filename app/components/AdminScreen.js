@@ -1,29 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import adminScreenStyles from '../styles/adminScreenStyle';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
 
 export const AdminScreen = () => {
-
-    const [currentTurn, setCurrentTurn] = useState(44);
     const [titleButton, setTitleButton] = useState('Llamar Turno');
-    const [waitTurn, setWaitTurn] = useState(1);
+    const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
+        return {
+            waitingQueue,
+            currentTurn
+        }
+    })
+    const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos en espera');
 
 
     const callTurn = () => {
-        let newTurn = waitTurn - 1;
-        if(waitTurn === 0){
+        if(!!!currentTurn){
             showValidationAlert();
         } else {
-            setWaitTurn(newTurn);
             updateCurrentTurn();
         }
     }
 
     const updateCurrentTurn = () => {
-        let turn = currentTurn + 1;
-        setCurrentTurn(turn);
+        dispatch({
+            type: 'INCREASE_CURRENT_TURN'
+        })
     }
 
     const showValidationAlert = () => {
@@ -45,7 +49,7 @@ export const AdminScreen = () => {
                 <View style={adminScreenStyles.content}>
                     <WaitingQueueComponent
                         label = {label}
-                        waitTurn = {waitTurn}
+                        waitTurn = {waitingQueue}
                         styleBox = {adminScreenStyles.boxTurn}
                         styleTitle = {adminScreenStyles.titleTurn}
                         styleNumber = {adminScreenStyles.numberTurn}
@@ -55,13 +59,14 @@ export const AdminScreen = () => {
                             Turno Actual
                         </Text>
                         <Text style={adminScreenStyles.numberTurn}>
-                            {currentTurn ? currentTurn : '- -'}
+                            {currentTurn}
                         </Text>
                     </View>
 
                     <TouchableOpacity
                         style={adminScreenStyles.callTurn}
                         onPress={callTurn}
+                        disabled={!!!currentTurn}
                     >
                         <Text style={adminScreenStyles.callTurnTxt}>
                             {titleButton}
