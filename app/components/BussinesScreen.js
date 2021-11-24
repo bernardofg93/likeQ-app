@@ -3,8 +3,10 @@ import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import bussinesScreenStyles from '../styles/bussinesScreenStyles';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
 import { useDispatch, useSelector } from 'react-redux';
+import messaging from '@react-native-firebase/messaging'
 
 export const BussinesScreen = () => {
+
     const [titleButton, setTitleButton] = useState('Pedir Turno');
     const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
         return {
@@ -12,6 +14,15 @@ export const BussinesScreen = () => {
             currentTurn
         }
     })
+
+    useEffect(() => {
+        const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+            console.log('Push received', remoteMessage);
+        });
+
+        return unsubscribe;
+    }, []);
+
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
     const [myTurn, setMyTurn] = useState(0)

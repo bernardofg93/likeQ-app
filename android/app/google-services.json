@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "854917253795",
+    "project_id": "like-q-app",
+    "storage_bucket": "like-q-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854917253795:android:53afc223990f171036cd16",
+        "android_client_info": {
+          "package_name": "com.likeqapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "854917253795-eveup6t5h6egnv87g7e10em54kjiamr1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhZ4m8rWx3f6l4qLkDYmXjFX7wd-xdZsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "854917253795-eveup6t5h6egnv87g7e10em54kjiamr1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
