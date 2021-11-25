@@ -9,18 +9,19 @@ import { status } from '../utils';
 
 export const BussinesScreen = () => {
     const defaultFormState = {
-        name: '',
-        email: ''
+        name: 'svarela@arkus.com',
+        email: 'svarela@arkus.com'
     }
     const user = useSelector(state => state.user)
     const [titleButton, setTitleButton] = useState('Pedir Turno');
     const [refreshing, setRefreshing] = useState(false)
     const [visible, setVisible] = useState(false)
     const [form, setForm] = useState(defaultFormState)
-    const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
+    const {currentTurn, waitingQueue, fcmToken} = useSelector(({waitingQueue,currentTurn, fcmToken}) => {
         return {
             waitingQueue,
-            currentTurn
+            currentTurn,
+            fcmToken
         }
     })
 
@@ -40,7 +41,6 @@ export const BussinesScreen = () => {
     const getTurn = () => {
         if(titleButton === 'Pedir Turno'){
             setVisible(true)
-            setTitleButton('Cancelar Turno');
         } else {
             showAlert();
         }
@@ -48,12 +48,44 @@ export const BussinesScreen = () => {
     const onSubmit = async () => {
         try {
             console.log('>>: form > ', form)
-            // dispatch({
-            //     type: 'SET_USER',
-            //     payload: form
-            // })
+            setRefreshing(true)
+            if((!!form.email || !!user && !!user.email)  && fcmToken){
+                const lastItemQuery = await firestore().collection('turns')
+                    .orderBy('turn_id', 'desc')
+                    .limit(1)
+                    .get()
+                if(lastItemQuery.docs){
+                    const lastId = lastItemQuery.docs[0].data().turn_id
+                    const currentId = lastId+1
+                    const {name, email} = form || user
+                    const values = {
+                        name,
+                        email,
+                        fcm_token: fcmToken,
+                        status: status.ACTIVE,
+                        turn_id: currentId
+                    }
+                    firestore()
+                        .collection('turns')
+                        .add(values)
+                        .then(() => {
+                            console.log('User added!');
+                            setMyTurn(currentId)
+                            dispatch({
+                                type: 'SET_USER',
+                                payload: form
+                            })
+                            setTitleButton('Cancelar Turno')
+                            setVisible(false)
+                            Alert.alert('Se ha registrado un turno a su nombre')
+                        });
+                }
+            }
         } catch (error) {
             console.log('>>: error > ', error)
+        }
+        finally{
+            setRefreshing(false)
         }
     }
 
@@ -94,6 +126,13 @@ export const BussinesScreen = () => {
 
         )
     }
+    const handleChange = (key, value) => {
+        const _form = {
+            ... form,
+            [key]: value
+        }
+        setForm(_form)
+    }
     return (
         <>
             <Modal
@@ -103,11 +142,13 @@ export const BussinesScreen = () => {
                 <View>
                     <Text>Ingrese su nombre</Text>
                     <TextInput
-                        onChangeText={text => console.log('>>: text > ', text)}
+                        onChangeText={text => handleChange('name', text)}
+                        value={form.name}
                     />
                     <Text>Ingrese su email</Text>
                     <TextInput
-                        onChangeText={text => console.log('>>: text > ', text)}
+                        onChangeText={text => handleChange('email', text)}
+                        value={form.email}
                     />
                     <View
                         style={{flexDirection: 'row'}}

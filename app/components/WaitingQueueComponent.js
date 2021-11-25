@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
 import {status} from '../utils'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import messaging from '@react-native-firebase/messaging'
 
 export const WaitingQueueComponent = (props) => {
     const dispatch = useDispatch()
+    const fcmToken = useSelector(state => state.fcmToken)
     const loadRT = async () => {
         const turns = firestore()
             .collection('turns')
@@ -20,8 +22,18 @@ export const WaitingQueueComponent = (props) => {
             })
         return () => turns()
     }
+    const loadToken = async () => {
+        const token = await messaging().getToken();
+        console.log('>>: doesnt exist token', token)
+        dispatch({
+            type: 'SET_TOKEN',
+            payload: token 
+        })
+    }
     React.useEffect(() => {
         loadRT()
+        if(!fcmToken)
+            loadToken()
     }, [])
     return (
         <>
