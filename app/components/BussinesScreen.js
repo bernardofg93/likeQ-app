@@ -4,7 +4,7 @@ import bussinesScreenStyles from '../styles/bussinesScreenStyles';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import messaging from '@react-native-firebase/messaging'
-import firestore from '@react-native-firebase/firestore'
+
 export const BussinesScreen = () => {
 
     const [titleButton, setTitleButton] = useState('Pedir Turno');
@@ -14,13 +14,8 @@ export const BussinesScreen = () => {
             currentTurn
         }
     })
-    const load = async () => {
-        const turns = await firestore().collection('turns').get()
-        console.log('>>: turns > ', turns.docs)
-    }
 
     useEffect(() => {
-        load()
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
             console.log('Push received', remoteMessage);
         });

@@ -9,11 +9,9 @@ import { AdminScreen } from './app/components/AdminScreen';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
 import { PersistGate } from 'redux-persist/integration/react';
-
 const Stack = createStackNavigator();
 
 const App = () => {
-
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
