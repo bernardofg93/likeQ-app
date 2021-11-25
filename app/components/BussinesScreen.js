@@ -24,8 +24,26 @@ export const BussinesScreen = () => {
             fcmToken
         }
     })
-
+    const load = async () => {
+        try {
+            setRefreshing(true)
+            const myTurn = await firestore().collection('turns')
+                .where('status', '==', status.ACTIVE)
+                .where('email', '==', form.email || user.email)
+                .limit(1)
+                .get()
+            if(myTurn.docs){
+                const turn = myTurn.docs[0].data().turn_id
+                setMyTurn(turn)
+            }
+        } catch (error) {
+            console.log('>>: error > ', error)
+        }finally{
+            setRefreshing(false)
+        }
+    }
     useEffect(() => {
+        load()
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
             console.log('Push received', remoteMessage);
         });
