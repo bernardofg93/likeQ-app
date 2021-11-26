@@ -110,7 +110,7 @@ export const AdminScreen = () => {
                             Turno Actual
                         </Text>
                         <Text style={adminScreenStyles.numberTurn}>
-                            {currentTurn}
+                            {currentTurn || '- -'}
                         </Text>
                     </View>
 
