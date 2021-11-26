@@ -10,7 +10,8 @@ import { status } from '../utils';
 export const BussinesScreen = () => {
     const defaultFormState = {
         name: 'svarela@arkus.com',
-        email: 'svarela@arkus.com'
+        email: 'svarela@arkus.com',
+        id: ''
     }
     const user = useSelector(state => state.user)
     const [titleButton, setTitleButton] = useState('Pedir Turno');
@@ -65,7 +66,6 @@ export const BussinesScreen = () => {
     }
     const onSubmit = async () => {
         try {
-            console.log('>>: form > ', form)
             setRefreshing(true)
             if((!!form.email || !!user && !!user.email)  && fcmToken){
                 const lastItemQuery = await firestore().collection('turns')
@@ -85,14 +85,22 @@ export const BussinesScreen = () => {
                     }
                     firestore()
                         .collection('turns')
-                        .add(values)
-                        .then(() => {
-                            console.log('User added!');
+                        .add(values)    
+                        .then(query => {
+                            const {id} = query
                             setMyTurn(currentId)
                             dispatch({
                                 type: 'SET_USER',
-                                payload: form
+                                payload: {
+                                    ...form,
+                                    id
+                                }
                             })
+                            const _form = {
+                                ... form,
+                                id
+                            }
+                            setForm(_form)
                             setTitleButton('Cancelar Turno')
                             setVisible(false)
                             Alert.alert('Se ha registrado un turno a su nombre')
@@ -112,11 +120,10 @@ export const BussinesScreen = () => {
         setForm(defaultFormState)
     }
     const cancelTurn = () => {
-        if(form.email || user.email){
+        if(form.id || user.id){
             setRefreshing(true)
             firestore().collection('turns')
-                .where('status', '==', status.ACTIVE)
-                .where('email', '==', form.email || user.email)
+                .doc(form.id || user.id)
                 .update({
                     status: status.INACTIVE
                 })
