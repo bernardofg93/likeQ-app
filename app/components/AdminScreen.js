@@ -32,7 +32,10 @@ export const AdminScreen = () => {
             .onSnapshot(query => {
                 if(query && query.docs){
                     const turnsR = query.docs.map(elemento => {
-                        return elemento.data()
+                        return {
+                            ...elemento.data(),
+                            id: elemento.id
+                        }
                     })
                     console.log(turnsR)
                     setTurns(turnsR)
@@ -72,7 +75,18 @@ export const AdminScreen = () => {
         )     
     }
 
-    const handleStatus = (elto, status) => {
+    const handleStatus = async (elto, statusChange) => {
+
+        if(elto && elto.turn_id){
+            firestore().collection('turns')
+                    .doc(elto.id)
+                    .update({
+                        status: statusChange
+                    })
+                    .then(() => {
+                        Alert.alert('Alert', 'Persona por atender:' + elto.name)
+                    });
+        }
         console.log('Cambiando status');
     }
 
