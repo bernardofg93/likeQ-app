@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, ScrollView, TouchableOpacity, Alert, Button, Image } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Alert, Button, Image, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import adminScreenStyles from '../styles/adminScreenStyle';
 import { status } from '../utils';
@@ -127,25 +127,25 @@ export const AdminScreen = () => {
 
                 <View>
                     <View style={{flexDirection: 'row'}}>
-                        <Text numberOfLines={1} style={{flex: .2, justifyContent: 'center'}}>Turno</Text>
-                        <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>Nombre</Text>
-                        <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>Email</Text>
-                        <Text numberOfLines={1} style={{flex: .2, justifyContent: 'center'}}>Accion</Text>
+                        <Text numberOfLines={1} style={[{flex: .2}, styles.justifyContentCenter]}>Turno</Text>
+                        <Text numberOfLines={1} style={[{flex: .3}, styles.justifyContentCenter]}>Nombre</Text>
+                        <Text numberOfLines={1} style={[{flex: .3}, styles.justifyContentCenter]}>Email</Text>
+                        <Text numberOfLines={1} style={[{flex: .2}, styles.justifyContentCenter]}>Accion</Text>
                     </View>
                     {
                         turns.map(elto => {
                             return (
-                                <View style={{flexDirection: 'row'}} key={elto.email}>
-                                    <Text numberOfLines={1} style={{flex: .2, justifyContent: 'center'}}>{elto.turn_id}</Text>
-                                    <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>{elto.name}</Text>
-                                    <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>{elto.email}</Text>
+                                <View style={{flexDirection: 'row'}} key={elto.id}>
+                                    <Text numberOfLines={1} style={[{flex: .2}, styles.justifyContentCenter]}>{elto.turn_id}</Text>
+                                    <Text numberOfLines={1} style={[{flex: .3}, styles.justifyContentCenter]}>{elto.name}</Text>
+                                    <Text numberOfLines={1} style={[{flex: .3}, styles.justifyContentCenter]}>{elto.email}</Text>
                                     <View style={{flex: .2}}>
                                         <View style={{flexDirection: 'row'}}>
                                         <TouchableOpacity onPress={() => handleStatus(elto, status.IN_PROGRESS)}>
-                                            <Image style={{tintColor: '#FFF', width: 15, height: 15, padding: 2}} resizeMode='contain' source={check}/>
+                                            <Image style={styles.icon} resizeMode='contain' source={check}/>
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => handleStatus(elto, status.INACTIVE)}>
-                                            <Image style={{tintColor: '#FFF', width: 15, height: 15, padding: 2}} resizeMode='contain' source={close}/>
+                                            <Image style={styles.icon} resizeMode='contain' source={close}/>
                                         </TouchableOpacity>
                                         </View>
                                     </View>
@@ -158,3 +158,10 @@ export const AdminScreen = () => {
         </>
     )
 }
+const styles = StyleSheet.create({
+    justifyContentCenter: {
+        justifyContent: 'center',
+        color: '#fff'
+    },
+    icon:{tintColor: '#FFF', width: 15, height: 15, padding: 2}
+})
