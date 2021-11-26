@@ -84,7 +84,11 @@ export const AdminScreen = () => {
                         status: statusChange
                     })
                     .then(() => {
-                        Alert.alert('Alert', 'Persona por atender:' + elto.name)
+                        if(statusChange === status.INACTIVE){
+                            Alert.alert('Alert', 'Persona rechazada:' + elto.name)
+                        } else {
+                            Alert.alert('Alert', 'Persona por atender:' + elto.name)
+                        }
                     });
         }
         console.log('Cambiando status');
