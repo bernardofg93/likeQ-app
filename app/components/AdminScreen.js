@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Alert, Button, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import adminScreenStyles from '../styles/adminScreenStyle';
+import { status } from '../utils';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
+import firestore from '@react-native-firebase/firestore'
+import check from '../assets/icons/check-solid.png'
+import close from '../assets/icons/times-solid.png'
 
 export const AdminScreen = () => {
     const [titleButton, setTitleButton] = useState('Llamar Turno');
+    const [turns, setTurns] = useState([]);
     const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
         return {
             waitingQueue,
@@ -15,6 +20,27 @@ export const AdminScreen = () => {
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos en espera');
 
+    useEffect(() => {
+        load();
+    }, []);
+
+    const load = () => {
+        const turnArray = firestore()
+            .collection('turns')
+            .where('status', '==', status.ACTIVE)
+            .orderBy('turn_id', 'asc')
+            .onSnapshot(query => {
+                if(query && query.docs){
+                    const turnsR = query.docs.map(elemento => {
+                        return elemento.data()
+                    })
+                    console.log(turnsR)
+                    setTurns(turnsR)
+                }
+            })
+        
+        return () => turnArray()
+    }
 
     const callTurn = () => {
         if(currentTurn >= waitingQueue){
@@ -46,6 +72,10 @@ export const AdminScreen = () => {
         )     
     }
 
+    const handleStatus = (elto, status) => {
+        console.log('Cambiando status');
+    }
+
     return (
         <>
             <ScrollView style={adminScreenStyles.scroll}>
@@ -75,6 +105,36 @@ export const AdminScreen = () => {
                             {titleButton}
                         </Text>
                     </TouchableOpacity>
+                </View>
+
+                <View>
+                    <View style={{flexDirection: 'row'}}>
+                        <Text numberOfLines={1} style={{flex: .2, justifyContent: 'center'}}>Turno</Text>
+                        <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>Nombre</Text>
+                        <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>Email</Text>
+                        <Text numberOfLines={1} style={{flex: .2, justifyContent: 'center'}}>Accion</Text>
+                    </View>
+                    {
+                        turns.map(elto => {
+                            return (
+                                <View style={{flexDirection: 'row'}} key={elto.email}>
+                                    <Text numberOfLines={1} style={{flex: .2, justifyContent: 'center'}}>{elto.turn_id}</Text>
+                                    <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>{elto.name}</Text>
+                                    <Text numberOfLines={1} style={{flex: .3, justifyContent: 'center'}}>{elto.email}</Text>
+                                    <View style={{flex: .2}}>
+                                        <View style={{flexDirection: 'row'}}>
+                                        <TouchableOpacity onPress={() => handleStatus(elto, status.IN_PROGRESS)}>
+                                            <Image style={{tintColor: '#FFF', width: 15, height: 15, padding: 2}} resizeMode='contain' source={check}/>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => handleStatus(elto, status.INACTIVE)}>
+                                            <Image style={{tintColor: '#FFF', width: 15, height: 15, padding: 2}} resizeMode='contain' source={close}/>
+                                        </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
                 </View>
             </ScrollView>
         </>

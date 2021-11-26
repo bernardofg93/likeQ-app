@@ -18,13 +18,11 @@ export const WaitingQueueComponent = (props) => {
                     type: 'SET_WAITING_QUEUE',
                     payload: turns.length || 0
                 })
-                console.log('>>: query > ', turns)
             })
         return () => turns()
     }
     const loadToken = async () => {
         const token = await messaging().getToken();
-        console.log('>>: doesnt exist token', token)
         dispatch({
             type: 'SET_TOKEN',
             payload: token 
