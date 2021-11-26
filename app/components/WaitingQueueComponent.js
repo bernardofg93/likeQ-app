@@ -30,9 +30,33 @@ export const WaitingQueueComponent = (props) => {
     }
     React.useEffect(() => {
         loadRT()
+        getCurrentTurn()
         if(!fcmToken)
             loadToken()
     }, [])
+
+    const getCurrentTurn = () => {
+        const turnArray = firestore()
+            .collection('turns')
+            .where('status', '==', status.IN_PROGRESS)
+            .limit(1)
+            .onSnapshot(query => {
+                if(query && query.docs && query.docs[0] && query.docs[0].data()){
+                    const turn = query.docs[0].data().turn_id
+                    dispatch({
+                        type: 'SET_ACTUAL_TURN',
+                        payload: turn
+                    })
+                } else {
+                    dispatch({
+                        type: 'SET_ACTUAL_TURN',
+                        payload: 0
+                    })
+                }
+            })
+        
+        return () => turnArray()
+    }
     return (
         <>
             <View style={props.styleBox}>
