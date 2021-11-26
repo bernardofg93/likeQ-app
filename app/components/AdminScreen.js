@@ -37,7 +37,6 @@ export const AdminScreen = () => {
                             id: elemento.id
                         }
                     })
-                    console.log(turnsR)
                     setTurns(turnsR)
                 }
             })
@@ -53,13 +52,34 @@ export const AdminScreen = () => {
         }
     }
 
-    const updateCurrentTurn = () => {
-        dispatch({
-            type: 'TO_DISCOUNT_A_WAITING_QUEUE'
-        })
-        dispatch({
-            type: 'INCREASE_CURRENT_TURN'
-        })
+    const updateCurrentTurn = async () => {
+        if(currentTurn){
+            const currentTurnQuery  = await firestore().collection('turns')
+                .where('turn_id', '==', currentTurn)
+                .where('status', '==', status.ACTIVE)
+                .orderBy('turn_id', 'asc')
+                .get()
+            console.log('>>: current ', currentTurnQuery.docs)
+        }else{
+            const firstTurnQuery  = await firestore().collection('turns')
+                .where('status', '==', status.ACTIVE)
+                .orderBy('turn_id', 'asc')
+                .limit(1)
+                .get()
+            const {id} = firstTurnQuery
+            const {fcm_token} = firstTurnQuery.docs
+            await firestore()
+                .doc(id)
+                .update({
+                    status: status.IN_PROGRESS
+                })
+            sendPushNotification(fcm_token)
+            console.log('>>: first turn', firstTurnQuery.docs)
+        }
+    }
+
+    const sendPushNotification  = fcm_token => {
+        console.log('>>: receiving token > ', fcm_token)
     }
 
     const showValidationAlert = () => {
