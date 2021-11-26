@@ -53,13 +53,33 @@ export const AdminScreen = () => {
     }
 
     const updateCurrentTurn = async () => {
+        let name = ''
+        let fcm_token = ''
+        let id = ''
         if(currentTurn){
-            const currentTurnQuery  = await firestore().collection('turns')
+            const currentTurnQuery = await firestore().collection('turns')
                 .where('turn_id', '==', currentTurn)
-                .where('status', '==', status.ACTIVE)
-                .orderBy('turn_id', 'asc')
+                .limit(1)
                 .get()
-            console.log('>>: current ', currentTurnQuery.docs)
+            if(currentTurnQuery.docs && currentTurnQuery.docs[0]){
+                const {id: currentTurnId} = currentTurnQuery.docs[0]
+                await firestore()
+                    .collection('turns')
+                    .doc(currentTurnId)
+                    .update({
+                        status: status.INACTIVE
+                    })
+                    const nextTurnsQuery  = await firestore().collection('turns')
+                        .where('turn_id', '>', currentTurn)
+                        .where('status', '==', status.ACTIVE)
+                        .orderBy('turn_id', 'asc')
+                        .get()
+                    const docs = nextTurnsQuery.docs
+                    id = docs[0].id
+                    const {name: _name, fcm_token: _fcmToken} = docs[0].data()
+                    fcm_token = _fcmToken
+                    name = _name
+            }
         }else{
             const firstTurnQuery  = await firestore().collection('turns')
                 .where('status', '==', status.ACTIVE)
@@ -67,17 +87,19 @@ export const AdminScreen = () => {
                 .limit(1)
                 .get()
             const item = firstTurnQuery.docs[0]
-            const id = item.id
-            const {fcm_token, name} = item.data()
-            await firestore()
-                .collection('turns')
-                .doc(id)
-                .update({
-                    status: status.IN_PROGRESS
-                })
-            sendPushNotification(fcm_token)
-            Alert.alert('Se ha llamado a la siguiente persona en turno, su nombre: '+name)
+            id = item.id
+            const {fcm_token: _fcmToken, name: _name} = item.data()
+            name = _name
+            fcm_token = _fcmToken
         }
+        await firestore()
+            .collection('turns')
+            .doc(id)
+            .update({
+                status: status.IN_PROGRESS
+            })
+        sendPushNotification(fcm_token)
+        Alert.alert('Se ha llamado a la siguiente persona en turno, su nombre: '+name)
     }
 
     const sendPushNotification  = fcm_token => {
@@ -98,7 +120,6 @@ export const AdminScreen = () => {
     }
 
     const handleStatus = async (elto, statusChange) => {
-
         if(elto && elto.turn_id){
             firestore().collection('turns')
                     .doc(elto.id)
@@ -113,7 +134,6 @@ export const AdminScreen = () => {
                         }
                     });
         }
-        console.log('Cambiando status');
     }
 
     return (
