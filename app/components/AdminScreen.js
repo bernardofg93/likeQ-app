@@ -66,15 +66,17 @@ export const AdminScreen = () => {
                 .orderBy('turn_id', 'asc')
                 .limit(1)
                 .get()
-            const {id} = firstTurnQuery
-            const {fcm_token} = firstTurnQuery.docs
+            const item = firstTurnQuery.docs[0]
+            const id = item.id
+            const {fcm_token, name} = item.data()
             await firestore()
+                .collection('turns')
                 .doc(id)
                 .update({
                     status: status.IN_PROGRESS
                 })
             sendPushNotification(fcm_token)
-            console.log('>>: first turn', firstTurnQuery.docs)
+            Alert.alert('Se ha llamado a la siguiente persona en turno, su nombre: '+name)
         }
     }
 
