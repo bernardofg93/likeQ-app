@@ -7,9 +7,12 @@ import { WaitingQueueComponent } from './WaitingQueueComponent';
 import firestore from '@react-native-firebase/firestore'
 import check from '../assets/icons/check-solid.png'
 import close from '../assets/icons/times-solid.png'
+import functions from '@react-native-firebase/functions';
+
 
 export const AdminScreen = () => {
     const [titleButton, setTitleButton] = useState('Llamar Turno');
+    const fcmToken = useSelector(state => state.fcmToken)
     const [turns, setTurns] = useState([]);
     const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
         return {
@@ -104,6 +107,11 @@ export const AdminScreen = () => {
 
     const sendPushNotification  = fcm_token => {
         console.log('>>: receiving token > ', fcm_token)
+        functions()
+            .httpsCallable('sendPushNotification')({token: fcm_token, message: '¡Es tu turno!'})
+            .then(response => {
+                console.log('>>: response > ', response.data)
+            });
     }
 
     const showValidationAlert = () => {

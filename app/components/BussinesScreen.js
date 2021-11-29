@@ -3,14 +3,13 @@ import { Text, View, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Butt
 import bussinesScreenStyles from '../styles/bussinesScreenStyles';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import messaging from '@react-native-firebase/messaging'
 import firestore from '@react-native-firebase/firestore'
 import { status } from '../utils';
 
 export const BussinesScreen = () => {
     const defaultFormState = {
-        name: 'svarela@arkus.com',
-        email: 'svarela@arkus.com',
+        name: '',
+        email: '',
         id: ''
     }
     const user = useSelector(state => state.user)
@@ -45,11 +44,6 @@ export const BussinesScreen = () => {
     }
     useEffect(() => {
         load()
-        const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-            console.log('Push received', remoteMessage);
-        });
-
-        return unsubscribe;
     }, []);
 
     const dispatch = useDispatch()
