@@ -9,9 +9,18 @@ import { AdminScreen } from './app/components/AdminScreen';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import messaging from '@react-native-firebase/messaging'
+
 const Stack = createStackNavigator();
 
 const App = () => {
+    React.useEffect(() => {
+        const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+            console.log('Push received', remoteMessage);
+        });
+
+        return unsubscribe;
+    })
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
