@@ -106,7 +106,6 @@ export const AdminScreen = () => {
     }
 
     const sendPushNotification  = fcm_token => {
-        console.log('>>: receiving token > ', fcm_token)
         functions()
             .httpsCallable('sendPushNotification')({token: fcm_token, message: '¡Es tu turno!'})
             .then(response => {
@@ -166,7 +165,7 @@ export const AdminScreen = () => {
 
                     <TouchableOpacity
                         style={adminScreenStyles.callTurn}
-                        onPress={callTurn}
+                        onPress={() => sendPushNotification('')} //token
                         disabled={currentTurn >= waitingQueue}
                     >
                         <Text style={adminScreenStyles.callTurnTxt}>
