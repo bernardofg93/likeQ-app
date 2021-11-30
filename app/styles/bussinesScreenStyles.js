@@ -55,7 +55,61 @@ const bussinesScreenStyles = StyleSheet.create({
         color: '#fff',
         fontSize: 30,
         textAlign: 'center'
-    }
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: "#51cbd4",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+      },
+      button: {
+        padding: 10,
+        elevation: 2,
+        marginTop: 5,
+        marginRight: 10,
+        flex: .5,
+        backgroundColor: '#000'
+      },
+      buttonOpen: {
+        backgroundColor: "#F194FF",
+      },
+      buttonClose: {
+        backgroundColor: '#000'
+      },
+      textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
+      modalText: {
+        marginBottom: 5,
+        textAlign: "center",
+        color: '#000',
+        fontWeight: 'bold'
+      },
+      input: {
+        height: 40,
+        margin: 5,
+        borderWidth: 1,
+        padding: 10,
+        width: 240,
+        color: '#000'
+      },
 })
 
 export default bussinesScreenStyles;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Button, RefreshControl } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Alert, Modal, TextInput, Button, RefreshControl, Pressable } from 'react-native';
 import bussinesScreenStyles from '../styles/bussinesScreenStyles';
 import { WaitingQueueComponent } from './WaitingQueueComponent';
 import { useDispatch, useSelector } from 'react-redux';
@@ -157,29 +157,35 @@ export const BussinesScreen = () => {
             <Modal
                 visible={visible}
                 animationType='slide'
+                transparent={true}
             >
-                <View>
-                    <Text>Ingrese su nombre</Text>
-                    <TextInput
-                        onChangeText={text => handleChange('name', text)}
-                        value={form.name}
-                    />
-                    <Text>Ingrese su email</Text>
-                    <TextInput
-                        onChangeText={text => handleChange('email', text)}
-                        value={form.email}
-                    />
-                    <View
-                        style={{flexDirection: 'row'}}
-                    >
-                        <Button
-                            onPress={() => onSubmit()}
-                            title='Reservar turno'
+                <View style={bussinesScreenStyles.centeredView}>
+                    <View style={bussinesScreenStyles.modalView}>
+                        <Text style={bussinesScreenStyles.modalText}>Ingrese su nombre</Text>
+                        <TextInput
+                            onChangeText={text => handleChange('name', text)}
+                            value={form.name}
+                            style={bussinesScreenStyles.input}
                         />
-                        <Button
-                            onPress={() => onClose()}
-                            title='Cerrar'
+                        <Text style={bussinesScreenStyles.modalText}>Ingrese su email</Text>
+                        <TextInput
+                            onChangeText={text => handleChange('email', text)}
+                            value={form.email}
+                            style={bussinesScreenStyles.input}
                         />
+                        <View style={{flexDirection: 'row'}}>
+                            <Pressable
+                                style={[bussinesScreenStyles.button, bussinesScreenStyles.buttonClose]}
+                                onPress={() => onSubmit()}>
+                                    <Text style={bussinesScreenStyles.textStyle}>Reservar Turno</Text>
+                            </Pressable>
+
+                            <Pressable
+                                style={[bussinesScreenStyles.button, bussinesScreenStyles.buttonClose]}
+                                onPress={() => onClose()}>
+                                    <Text style={bussinesScreenStyles.textStyle}>Cerrar</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
             </Modal>
