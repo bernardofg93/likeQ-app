@@ -48,7 +48,8 @@ export const AdminScreen = () => {
     }
 
     const callTurn = () => {
-        if(currentTurn >= waitingQueue){
+        console.log('>>: current turn > ', currentTurn, waitingQueue)
+        if(!waitingQueue){
             showValidationAlert();
         } else {
             updateCurrentTurn();
@@ -61,8 +62,8 @@ export const AdminScreen = () => {
         let id = ''
         if(currentTurn){
             const currentTurnQuery = await firestore().collection('turns')
-                .where('turn_id', '==', currentTurn)
-                .limit(1)
+                .where('turn_id', '>=', currentTurn)
+                .limit(5)
                 .get()
             if(currentTurnQuery.docs && currentTurnQuery.docs[0]){
                 const {id: currentTurnId} = currentTurnQuery.docs[0]
@@ -79,21 +80,21 @@ export const AdminScreen = () => {
                         .get()
                     const docs = nextTurnsQuery.docs
                     id = docs[0].id
-                    const {name: _name, fcm_token: _fcmToken} = docs[0].data()
-                    fcm_token = _fcmToken
+                    const {name: _name} = docs[0].data()
+                    fcm_token = currentTurnQuery.docs.map(element => element.data().fcm_token)
                     name = _name
             }
         }else{
             const firstTurnQuery  = await firestore().collection('turns')
                 .where('status', '==', status.ACTIVE)
                 .orderBy('turn_id', 'asc')
-                .limit(1)
+                .limit(5)
                 .get()
             const item = firstTurnQuery.docs[0]
             id = item.id
             const {fcm_token: _fcmToken, name: _name} = item.data()
             name = _name
-            fcm_token = _fcmToken
+            fcm_token = firstTurnQuery.docs.map(element => element.data().fcm_token)
         }
         await firestore()
             .collection('turns')
@@ -105,12 +106,24 @@ export const AdminScreen = () => {
         Alert.alert('Se ha llamado a la siguiente persona en turno, su nombre: '+name)
     }
 
-    const sendPushNotification  = fcm_token => {
-        functions()
-            .httpsCallable('sendPushNotification')({token: fcm_token, message: '¡Es tu turno!'})
-            .then(response => {
-                console.log('>>: response > ', response.data)
-            });
+    const sendPushNotification  = (fcm_token) => {
+        // console.log('>>: tokens > ', fcm_token)
+        if(Array.isArray(fcm_token)){
+            const current = fcm_token[0]
+            functions()
+                .httpsCallable('sendPushNotification')({token: current, message: '¡Es tu turno!'})
+                const others = fcm_token.slice(1, fcm_token.length-1)
+                // console.log('>>: turns > ', fcm_token)
+                // console.log('>>: first', current)
+                // console.log('>>: others > ', others)
+                others.forEach((element, i) => {
+                    functions()
+                    .httpsCallable('sendPushNotification')({token: element, message: '¡Ya casi! Quedan '+(i+1)+' turnos delante de ti'})
+                })
+        }else{
+            functions()
+                .httpsCallable('sendPushNotification')({token: fcm_token, message: '¡Es tu turno!'})
+        }
     }
 
     const showValidationAlert = () => {
@@ -142,7 +155,7 @@ export const AdminScreen = () => {
                     });
         }
     }
-
+    
     return (
         <>
             <ScrollView style={adminScreenStyles.scroll}>
@@ -165,8 +178,7 @@ export const AdminScreen = () => {
 
                     <TouchableOpacity
                         style={adminScreenStyles.callTurn}
-                        onPress={() => sendPushNotification('')} //token
-                        disabled={currentTurn >= waitingQueue}
+                        onPress={() => callTurn()}
                     >
                         <Text style={adminScreenStyles.callTurnTxt}>
                             {titleButton}
