@@ -133,8 +133,8 @@ export const BussinesScreen = () => {
 
     const showAlert = () => {
         Alert.alert(
-            'Atencion',
-            'Desea cancelar su turno?',
+            'Atención',
+            '¿Desea cancelar su turno?',
             [
                 {
                     text: 'Si',
@@ -202,7 +202,7 @@ export const BussinesScreen = () => {
 
                     <WaitingQueueComponent
                         label = {label}
-                        waitTurn = {waitingQueue}
+                        waitTurn = {waitingQueue-1}
                         styleBox = {bussinesScreenStyles.boxTurn}
                         styleTitle = {bussinesScreenStyles.titleTurn}
                         styleNumber = {bussinesScreenStyles.numberTurn}
