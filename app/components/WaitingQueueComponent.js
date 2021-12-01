@@ -47,10 +47,19 @@ export const WaitingQueueComponent = (props) => {
                         type: 'SET_ACTUAL_TURN',
                         payload: turn
                     })
+                    const _fcm_token = query.docs[0].data().fcm_token
+                    dispatch({
+                        type: 'SET_CURRENT_DOC_ID',
+                        payload: _fcm_token
+                    })
                 } else {
                     dispatch({
                         type: 'SET_ACTUAL_TURN',
                         payload: 0
+                    })
+                    dispatch({
+                        type: 'SET_CURRENT_DOC_ID',
+                        payload: null
                     })
                 }
             })
