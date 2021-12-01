@@ -151,6 +151,7 @@ export const AdminScreen = () => {
                             Alert.alert('Alert', 'Persona rechazada:' + elto.name)
                         } else {
                             Alert.alert('Alert', 'Persona por atender:' + elto.name)
+                            sendPushNotification(elto.fcm_token)
                         }
                     });
         }
