@@ -14,10 +14,11 @@ export const AdminScreen = () => {
     const [titleButton, setTitleButton] = useState('Llamar Turno');
     const fcmToken = useSelector(state => state.fcmToken)
     const [turns, setTurns] = useState([]);
-    const {currentTurn, waitingQueue} = useSelector(({waitingQueue,currentTurn}) => {
+    const {currentTurn, waitingQueue, currentDocId} = useSelector(({waitingQueue,currentTurn,currentDocId}) => {
         return {
             waitingQueue,
-            currentTurn
+            currentTurn,
+            currentDocId
         }
     })
     const dispatch = useDispatch()
@@ -73,6 +74,7 @@ export const AdminScreen = () => {
                     .update({
                         status: status.INACTIVE
                     })
+                    console.log(currentTurnId)
                     const nextTurnsQuery  = await firestore().collection('turns')
                         .where('turn_id', '>', currentTurn)
                         .where('status', '==', status.ACTIVE)
@@ -96,6 +98,9 @@ export const AdminScreen = () => {
             name = _name
             fcm_token = firstTurnQuery.docs.map(element => element.data().fcm_token)
         }
+        if(currentDocId){
+            sendPushNotification(currentDocId, 'Tu turno ha terminado.')    
+        }
         await firestore()
             .collection('turns')
             .doc(id)
@@ -106,12 +111,12 @@ export const AdminScreen = () => {
         Alert.alert('Se ha llamado a la siguiente persona en turno, su nombre: '+name)
     }
 
-    const sendPushNotification  = (fcm_token) => {
+    const sendPushNotification  = (fcm_token, message = '¡Es tu turno!') => {
         // console.log('>>: tokens > ', fcm_token)
         if(Array.isArray(fcm_token)){
             const current = fcm_token[0]
             functions()
-                .httpsCallable('sendPushNotification')({token: current, message: '¡Es tu turno!'})
+                .httpsCallable('sendPushNotification')({token: current, message})
                 const others = fcm_token.slice(1, fcm_token.length-1)
                 // console.log('>>: turns > ', fcm_token)
                 // console.log('>>: first', current)
@@ -122,7 +127,7 @@ export const AdminScreen = () => {
                 })
         }else{
             functions()
-                .httpsCallable('sendPushNotification')({token: fcm_token, message: '¡Es tu turno!'})
+                .httpsCallable('sendPushNotification')({token: fcm_token, message})
         }
     }
 
@@ -141,12 +146,31 @@ export const AdminScreen = () => {
 
     const handleStatus = async (elto, statusChange) => {
         if(elto && elto.turn_id){
+            if(statusChange === status.IN_PROGRESS){
+                const currentTurnQuery = await firestore().collection('turns')
+                        .where('status', '>=', status.IN_PROGRESS)
+                        .get()
+                        if(currentTurnQuery.docs){
+                            currentTurnQuery.docs.forEach(async elto => {
+                                const id = elto.id
+                                await firestore()
+                                .collection('turns')
+                                .doc(id)
+                                .update({
+                                    status: status.INACTIVE
+                                })
+    
+                                sendPushNotification(elto.data().fcm_token, 'Tu turno ha terminado.')
+                            })
+                        }
+            }
+
             firestore().collection('turns')
                     .doc(elto.id)
                     .update({
                         status: statusChange
                     })
-                    .then(() => {
+                    .then( async () => {
                         if(statusChange === status.INACTIVE){
                             Alert.alert('Alert', 'Persona rechazada:' + elto.name)
                         } else {
