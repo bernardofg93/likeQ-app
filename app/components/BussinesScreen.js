@@ -13,7 +13,6 @@ export const BussinesScreen = () => {
         id: ''
     }
     const user = useSelector(state => state.user)
-    const [titleButton, setTitleButton] = useState('Pedir Turno');
     const [refreshing, setRefreshing] = useState(false)
     const [visible, setVisible] = useState(false)
     const [form, setForm] = useState(defaultFormState)
@@ -35,6 +34,7 @@ export const BussinesScreen = () => {
             if(myTurn.docs){
                 const turn = myTurn.docs[0].data().turn_id
                 setMyTurn(turn)
+                setTitleButton('Cancelar Turno')
             }
         } catch (error) {
             console.log('>>: error > ', error)
@@ -49,6 +49,7 @@ export const BussinesScreen = () => {
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
     const [myTurn, setMyTurn] = useState(0)
+    const [titleButton, setTitleButton] = useState('Pedir Turno')
 
 
     const getTurn = () => {
@@ -83,6 +84,7 @@ export const BussinesScreen = () => {
                         .then(query => {
                             const {id} = query
                             setMyTurn(currentId)
+                            setTitleButton('Cancelar Turno')
                             dispatch({
                                 type: 'SET_USER',
                                 payload: {
@@ -95,7 +97,6 @@ export const BussinesScreen = () => {
                                 id
                             }
                             setForm(_form)
-                            setTitleButton('Cancelar Turno')
                             setVisible(false)
                             Alert.alert('Se ha registrado un turno a su nombre')
                         });
@@ -123,7 +124,7 @@ export const BussinesScreen = () => {
                 })
                 .then(() => {
                     setMyTurn(0)
-                    setTitleButton('Pedir Turno');
+                    setTitleButton('Pedir Turno')
                     setRefreshing(false)
                 });
             if(visible)
