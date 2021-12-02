@@ -73,7 +73,7 @@ export const WaitingQueueComponent = (props) => {
                     {props.label}
                 </Text>
                 <Text style={props.styleNumber}>
-                    {props.waitTurn}
+                    {props.waitTurn || 0}
                 </Text>
             </View>
         </>
