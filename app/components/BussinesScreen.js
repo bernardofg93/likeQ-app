@@ -146,7 +146,11 @@ export const BussinesScreen = () => {
 
         )
     }
-    const handleChange = (key, value) => {
+    const handleChange = (key, value: string) => {
+        if(key === 'email' && !value.includes('@')){
+            Alert.alert('El correo debe contener un @')
+            return false
+        }
         const _form = {
             ... form,
             [key]: value
@@ -176,6 +180,7 @@ export const BussinesScreen = () => {
                         />
                         <View style={{flexDirection: 'row'}}>
                             <Pressable
+                                disabled={!form.email || !form.name}
                                 style={[bussinesScreenStyles.button, bussinesScreenStyles.buttonClose]}
                                 onPress={() => onSubmit()}>
                                     <Text style={bussinesScreenStyles.textStyle}>Reservar Turno</Text>
