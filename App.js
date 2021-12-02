@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {AppState} from 'react-native'
+import {Alert, AppState} from 'react-native'
 //Components
 import { ListStores } from './app/components/ListStores';
 import { Home } from './app/components/Home';
@@ -10,7 +10,7 @@ import { AdminScreen } from './app/components/AdminScreen';
 import { Provider } from 'react-redux';
 import { store, persistor } from './app/store';
 import { PersistGate } from 'redux-persist/integration/react';
-import messaging from '@react-native-firebase/messaging'
+import messaging from '@react-native-firebase/messaging';
 
 const Stack = createStackNavigator();
 
@@ -19,15 +19,11 @@ const App = () => {
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
             if(AppState.currentState === 'active'){
                 const {data} = remoteMessage
-                PushNotification.localNotificationSchedule({
-                    message: data.body, // (required)
-                    date: new Date(Date.now() + (1 * 1000)),
-                    actions: ["ReplyInput"],
-                    reply_placeholder_text: "Write your response...", // (required)
-                    reply_button_text: "Reply" // (required)
-                });
+                Alert.alert(
+                    'Atención',
+                    data.body        
+                )
             }
-            console.log('Push received', remoteMessage);
         });
 
         return unsubscribe;

@@ -16,11 +16,11 @@ export const Home = () => {
                 <Text>Usuario</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => navigation.navigate('Administrador')}
             >
                 <Text>Administrador</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
