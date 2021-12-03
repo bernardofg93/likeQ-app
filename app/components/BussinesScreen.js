@@ -48,10 +48,10 @@ export const BussinesScreen = () => {
     }
     useEffect(() => {
         load()
-        if(!currentTurn){
+        if(!myTurn){
             setTitleButton('Pedir Turno')
         }
-    }, [currentTurn]);
+    }, [myTurn]);
 
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
