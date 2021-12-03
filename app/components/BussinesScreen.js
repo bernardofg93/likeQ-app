@@ -62,6 +62,10 @@ export const BussinesScreen = () => {
     }
     const onSubmit = async () => {
         try {
+            if(key === 'email' && !value.includes('@')){
+                Alert.alert('El correo debe contener un @')
+                return false
+            }
             setRefreshing(true)
             if((!!form.email || !!user && !!user.email)  && fcmToken){
                 const lastItemQuery = await firestore().collection('turns')
@@ -148,10 +152,6 @@ export const BussinesScreen = () => {
         )
     }
     const handleChange = (key, value: string) => {
-        if(key === 'email' && !value.includes('@')){
-            Alert.alert('El correo debe contener un @')
-            return false
-        }
         const _form = {
             ... form,
             [key]: value
