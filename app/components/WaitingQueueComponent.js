@@ -8,23 +8,26 @@ import messaging from '@react-native-firebase/messaging'
 export const WaitingQueueComponent = (props) => {
     const dispatch = useDispatch()
     const fcmToken = useSelector(state => state.fcmToken)
-    const currentTurn = useSelector(state => state.currentTurn)
+    const myTurn = useSelector(state => state.myTurn)
     const loadRT = async () => {
         const turns = firestore()
             .collection('turns')
             .where('status', '==', status.ACTIVE)
             .onSnapshot(query => {
                 const turns = query.docs
-                const exist = turns.map(element => element.data()).some(element => element.fcm_token === fcmToken)
+                const data = turns.map(element => element.data())
+                const exist = data.some(element => element.fcm_token === fcmToken)
                 if(!exist){
                     dispatch({
                         type: 'SET_MY_TURN',
                         payload: 0
                     })
                 }
+                const index = data.findIndex(element => element.turn_id === myTurn)
+                const turnsToWait = data.length - index
                 dispatch({
                     type: 'SET_WAITING_QUEUE',
-                    payload: turns.length || 0
+                    payload: turnsToWait || 0
                 })
             })
         return () => turns()

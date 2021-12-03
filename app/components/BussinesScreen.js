@@ -16,8 +16,9 @@ export const BussinesScreen = () => {
     const [refreshing, setRefreshing] = useState(false)
     const [visible, setVisible] = useState(false)
     const [form, setForm] = useState(defaultFormState)
-    const {currentTurn, myTurn, fcmToken} = useSelector(({myTurn, currentTurn, fcmToken}) => {
+    const {currentTurn, myTurn, fcmToken, waitingQueue} = useSelector(({waitingQueue, myTurn, currentTurn, fcmToken}) => {
         return {
+            waitingQueue,
             myTurn,
             currentTurn,
             fcmToken
@@ -222,7 +223,7 @@ export const BussinesScreen = () => {
                     >
                         <WaitingQueueComponent
                             label={label}
-                            waitTurn={myTurn && currentTurn ? myTurn - currentTurn : 0}
+                            waitTurn={waitingQueue || 0}
                             styleBox={bussinesScreenStyles.boxTurn}
                             styleTitle={bussinesScreenStyles.titleTurn}
                             styleNumber={bussinesScreenStyles.numberTurn}
