@@ -23,7 +23,6 @@ export const BussinesScreen = () => {
             fcmToken
         }
     })
-    console.log('>>: waitingQueue . ', waitingQueue)
     const load = async () => {
         try {
             setRefreshing(true)
