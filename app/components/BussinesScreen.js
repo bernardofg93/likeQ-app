@@ -203,8 +203,6 @@ export const BussinesScreen = () => {
                 />}
             >
                 <View style={bussinesScreenStyles.content}>
-                    <Text style={bussinesScreenStyles.titleScreen}>Este negocio tiene aproximadamente 20</Text>
-                    <Text style={bussinesScreenStyles.titleScreen}>minutos de espera</Text>
 
                     <WaitingQueueComponent
                         label = {label}
