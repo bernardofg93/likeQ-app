@@ -23,6 +23,7 @@ export const BussinesScreen = () => {
             fcmToken
         }
     })
+    console.log('>>:currentTurn > ', currentTurn)
     const load = async () => {
         try {
             setRefreshing(true)
@@ -31,7 +32,7 @@ export const BussinesScreen = () => {
                 .where('email', '==', form.email || user.email)
                 .limit(1)
                 .get()
-            if(myTurn.docs){
+            if(!!myTurn.docs?.length){
                 const turn = myTurn.docs[0].data().turn_id
                 setMyTurn(turn)
                 setTitleButton('Cancelar Turno')
@@ -205,21 +206,35 @@ export const BussinesScreen = () => {
                 <View style={bussinesScreenStyles.content}>
                     <Text style={bussinesScreenStyles.titleScreen}>Este negocio tiene aproximadamente 20</Text>
                     <Text style={bussinesScreenStyles.titleScreen}>minutos de espera</Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            paddingHorizontal: 10
+                        }}
+                    >
+                        <WaitingQueueComponent
+                            label={label}
+                            waitTurn={waitingQueue-1 || 0}
+                            styleBox={bussinesScreenStyles.boxTurn}
+                            styleTitle={bussinesScreenStyles.titleTurn}
+                            styleNumber={bussinesScreenStyles.numberTurn}
+                        />
 
-                    <WaitingQueueComponent
-                        label = {label}
-                        waitTurn = {waitingQueue-1 || 0}
-                        styleBox = {bussinesScreenStyles.boxTurn}
-                        styleTitle = {bussinesScreenStyles.titleTurn}
-                        styleNumber = {bussinesScreenStyles.numberTurn}
-                    />
-
+                        <View style={bussinesScreenStyles.boxTurn}>
+                            <Text style={bussinesScreenStyles.titleTurn}>
+                                Tu turno
+                            </Text>
+                            <Text style={bussinesScreenStyles.numberTurn}>
+                                {myTurn || '- -'}
+                            </Text>
+                        </View>
+                    </View>
                     <View style={bussinesScreenStyles.boxTurn}>
                         <Text style={bussinesScreenStyles.titleTurn}>
-                            Tu turno
+                            Turno Actual
                         </Text>
                         <Text style={bussinesScreenStyles.numberTurn}>
-                            {myTurn || '- -'}
+                            {currentTurn || 0}
                         </Text>
                     </View>
 
