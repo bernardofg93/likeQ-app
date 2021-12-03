@@ -23,6 +23,7 @@ export const BussinesScreen = () => {
             fcmToken
         }
     })
+    console.log('>>: waitingQueue . ', waitingQueue)
     const load = async () => {
         try {
             setRefreshing(true)
@@ -208,7 +209,7 @@ export const BussinesScreen = () => {
 
                     <WaitingQueueComponent
                         label = {label}
-                        waitTurn = {waitingQueue-1}
+                        waitTurn = {waitingQueue-1 || 0}
                         styleBox = {bussinesScreenStyles.boxTurn}
                         styleTitle = {bussinesScreenStyles.titleTurn}
                         styleNumber = {bussinesScreenStyles.numberTurn}
