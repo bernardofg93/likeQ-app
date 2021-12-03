@@ -23,7 +23,6 @@ export const BussinesScreen = () => {
             fcmToken
         }
     })
-    console.log('>>:currentTurn > ', currentTurn)
     const load = async () => {
         try {
             setRefreshing(true)
@@ -204,8 +203,6 @@ export const BussinesScreen = () => {
                 />}
             >
                 <View style={bussinesScreenStyles.content}>
-                    <Text style={bussinesScreenStyles.titleScreen}>Este negocio tiene aproximadamente 20</Text>
-                    <Text style={bussinesScreenStyles.titleScreen}>minutos de espera</Text>
                     <View
                         style={{
                             flexDirection: 'row',
