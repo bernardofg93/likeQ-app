@@ -27,18 +27,20 @@ export const BussinesScreen = () => {
     const load = async () => {
         try {
             setRefreshing(true)
-            const _myTurn = await firestore().collection('turns')
-                .where('status', '==', status.ACTIVE)
-                .where('email', '==', form.email || user.email)
-                .limit(1)
-                .get()
-            if(!!_myTurn.docs?.length){
-                const turn = _myTurn.docs[0].data().turn_id
-                dispatch({
-                    type: 'SET_MY_TURN',
-                    payload: parseInt(turn)
-                })
-                setTitleButton('Cancelar Turno')
+            if(!!form?.email || user?.email){
+                const _myTurn = await firestore().collection('turns')
+                    .where('status', '==', status.ACTIVE)
+                    .where('email', '==', form.email || user.email)
+                    .limit(1)
+                    .get()
+                if(!!_myTurn.docs?.length){
+                    const turn = _myTurn.docs[0].data().turn_id
+                    dispatch({
+                        type: 'SET_MY_TURN',
+                        payload: parseInt(turn)
+                    })
+                    setTitleButton('Cancelar Turno')
+                }
             }
         } catch (error) {
             console.log('>>: error > ', error)

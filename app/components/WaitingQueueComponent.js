@@ -9,6 +9,7 @@ export const WaitingQueueComponent = (props) => {
     const dispatch = useDispatch()
     const fcmToken = useSelector(state => state.fcmToken)
     const myTurn = useSelector(state => state.myTurn)
+    const user = useSelector(state => state.user)
     const loadRT = async () => {
         const turns = firestore()
             .collection('turns')
@@ -22,6 +23,12 @@ export const WaitingQueueComponent = (props) => {
                         type: 'SET_MY_TURN',
                         payload: 0
                     })
+                    if(!!user){
+                        dispatch({
+                            type: 'SET_USER',
+                            payload: null
+                        })
+                    }
                 }
                 const index = data.findIndex(element => element.turn_id === myTurn)
                 const turnsToWait = data.length - index
