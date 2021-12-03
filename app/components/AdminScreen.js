@@ -102,7 +102,7 @@ export const AdminScreen = () => {
                 status: status.IN_PROGRESS
             })
         sendPushNotification(fcm_token)
-        Alert.alert('Se ha llamado a la siguiente persona en turno, su nombre: '+name)
+        Alert.alert('Se ha cambiado de turno', 'La siguiente persona en turno es: '+name)
     }
 
     const sendPushNotification  = (fcm_token, message = '¡Es tu turno!') => {
