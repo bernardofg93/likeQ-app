@@ -15,7 +15,8 @@ export const WaitingQueueComponent = (props) => {
             .where('status', '==', status.ACTIVE)
             .onSnapshot(query => {
                 const turns = query.docs
-                if(currentTurn && !turns.some(element => element.turn_id === currentTurn)){
+                const exist = turns.map(element => element.data()).some(element => element.fcm_token === fcmToken)
+                if(!exist){
                     dispatch({
                         type: 'SET_ACTUAL_TURN',
                         payload: 0
@@ -48,13 +49,14 @@ export const WaitingQueueComponent = (props) => {
             .where('status', '==', status.IN_PROGRESS)
             .limit(1)
             .onSnapshot(query => {
-                if(query && query.docs && query.docs[0] && query.docs[0].data()){
-                    const turn = query.docs[0].data().turn_id
+                const data = query?.docs?.[0]?.data()
+                if(!!data){
+                    const turn = data.turn_id
                     dispatch({
                         type: 'SET_ACTUAL_TURN',
                         payload: turn
                     })
-                    const _fcm_token = query.docs[0].data().fcm_token
+                    const _fcm_token = data.fcm_token
                     dispatch({
                         type: 'SET_CURRENT_DOC_ID',
                         payload: _fcm_token

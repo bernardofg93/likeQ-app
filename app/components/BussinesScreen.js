@@ -44,7 +44,10 @@ export const BussinesScreen = () => {
     }
     useEffect(() => {
         load()
-    }, []);
+        if(!currentTurn){
+            setTitleButton('Pedir Turno')
+        }
+    }, [currentTurn]);
 
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
@@ -66,7 +69,7 @@ export const BussinesScreen = () => {
                 return false
             }
             setRefreshing(true)
-            if((!!form.email || !!user && !!user.email)  && fcmToken){
+            if((!!form.email || !!user?.email)  && fcmToken){
                 const lastItemQuery = await firestore().collection('turns')
                     .orderBy('turn_id', 'desc')
                     .limit(1)
