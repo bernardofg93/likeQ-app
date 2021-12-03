@@ -27,7 +27,7 @@ export const WaitingQueueComponent = (props) => {
                 const turnsToWait = data.length - index
                 dispatch({
                     type: 'SET_WAITING_QUEUE',
-                    payload: turnsToWait || 0
+                    payload: exist ? turnsToWait : 0
                 })
             })
         return () => turns()
