@@ -62,7 +62,7 @@ export const BussinesScreen = () => {
     }
     const onSubmit = async () => {
         try {
-            if(key === 'email' && !value.includes('@')){
+            if(!form?.email?.includes('@')){
                 Alert.alert('El correo debe contener un @')
                 return false
             }
