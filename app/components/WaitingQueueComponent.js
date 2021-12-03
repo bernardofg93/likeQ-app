@@ -18,7 +18,7 @@ export const WaitingQueueComponent = (props) => {
                 const exist = turns.map(element => element.data()).some(element => element.fcm_token === fcmToken)
                 if(!exist){
                     dispatch({
-                        type: 'SET_ACTUAL_TURN',
+                        type: 'SET_MY_TURN',
                         payload: 0
                     })
                 }

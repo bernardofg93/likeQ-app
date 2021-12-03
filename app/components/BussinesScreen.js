@@ -16,9 +16,9 @@ export const BussinesScreen = () => {
     const [refreshing, setRefreshing] = useState(false)
     const [visible, setVisible] = useState(false)
     const [form, setForm] = useState(defaultFormState)
-    const {currentTurn, waitingQueue, fcmToken} = useSelector(({waitingQueue,currentTurn, fcmToken}) => {
+    const {currentTurn, myTurn, fcmToken} = useSelector(({myTurn, currentTurn, fcmToken}) => {
         return {
-            waitingQueue,
+            myTurn,
             currentTurn,
             fcmToken
         }
@@ -26,14 +26,17 @@ export const BussinesScreen = () => {
     const load = async () => {
         try {
             setRefreshing(true)
-            const myTurn = await firestore().collection('turns')
+            const _myTurn = await firestore().collection('turns')
                 .where('status', '==', status.ACTIVE)
                 .where('email', '==', form.email || user.email)
                 .limit(1)
                 .get()
-            if(!!myTurn.docs?.length){
-                const turn = myTurn.docs[0].data().turn_id
-                setMyTurn(turn)
+            if(!!_myTurn.docs?.length){
+                const turn = _myTurn.docs[0].data().turn_id
+                dispatch({
+                    type: 'SET_MY_TURN',
+                    payload: parseInt(turn)
+                })
                 setTitleButton('Cancelar Turno')
             }
         } catch (error) {
@@ -51,7 +54,6 @@ export const BussinesScreen = () => {
 
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
-    const [myTurn, setMyTurn] = useState(0)
     const [titleButton, setTitleButton] = useState('Pedir Turno')
 
 
@@ -90,7 +92,10 @@ export const BussinesScreen = () => {
                         .add(values)    
                         .then(query => {
                             const {id} = query
-                            setMyTurn(currentId)
+                            dispatch({
+                                type: 'SET_MY_TURN',
+                                payload: currentId
+                            })
                             setTitleButton('Cancelar Turno')
                             dispatch({
                                 type: 'SET_USER',
@@ -130,7 +135,10 @@ export const BussinesScreen = () => {
                     status: status.INACTIVE
                 })
                 .then(() => {
-                    setMyTurn(0)
+                    dispatch({
+                        type: 'SET_MY_TURN',
+                        payload: 0
+                    })
                     setTitleButton('Pedir Turno')
                     setRefreshing(false)
                 });
