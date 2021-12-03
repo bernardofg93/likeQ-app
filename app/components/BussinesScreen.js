@@ -229,6 +229,7 @@ export const BussinesScreen = () => {
                             styleBox={bussinesScreenStyles.boxTurn}
                             styleTitle={bussinesScreenStyles.titleTurn}
                             styleNumber={bussinesScreenStyles.numberTurn}
+                            isUser
                         />
 
                         <View style={bussinesScreenStyles.boxTurn}>
