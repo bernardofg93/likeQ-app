@@ -88,21 +88,20 @@ export const AdminScreen = () => {
         }
         if(currentDocId){
             sendPushNotification(currentDocId, 'Tu turno ha terminado.')
-            firestore()
+            const currentInProgress = await firestore()
                 .collection('turns')
                 .where('status', '==', status.IN_PROGRESS)
                 .get()
-                .then(query => {
-                    const items = query.docs
-                    items.forEach(element => {
-                        firestore()
-                            .collection('turns')
-                            .doc(element.id)
-                            .update({
-                                status: status.INACTIVE
-                            })
+            for (let index = 0; index < currentInProgress.docs.length; index++) {
+                const element = currentInProgress.docs[index];
+                await firestore()
+                    .collection('turns')
+                    .doc(element.id)
+                    .update({
+                        status: status.INACTIVE
                     })
-                })
+                
+            }
         }
         await firestore()
             .collection('turns')
