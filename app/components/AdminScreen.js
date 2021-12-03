@@ -49,7 +49,6 @@ export const AdminScreen = () => {
     }
 
     const callTurn = () => {
-        console.log('>>: current turn > ', currentTurn, waitingQueue)
         if(!waitingQueue){
             showValidationAlert();
         } else {
@@ -61,30 +60,19 @@ export const AdminScreen = () => {
         let name = ''
         let fcm_token = ''
         let id = ''
-        if(currentTurn){
+        if(!!currentTurn){
             const currentTurnQuery = await firestore().collection('turns')
                 .where('turn_id', '>=', currentTurn)
+                .where('status', '==', status.ACTIVE)
+                .orderBy('turn_id', 'asc')
                 .limit(5)
                 .get()
             if(!!currentTurnQuery?.docs?.length){
-                const {id: currentTurnId} = currentTurnQuery.docs[0]
-                await firestore()
-                    .collection('turns')
-                    .doc(currentTurnId)
-                    .update({
-                        status: status.INACTIVE
-                    })
-                    console.log(currentTurnId)
-                    const nextTurnsQuery  = await firestore().collection('turns')
-                        .where('turn_id', '>', currentTurn)
-                        .where('status', '==', status.ACTIVE)
-                        .orderBy('turn_id', 'asc')
-                        .get()
-                    const docs = nextTurnsQuery.docs
-                    id = docs[0].id
-                    const {name: _name} = docs[0].data()
-                    fcm_token = currentTurnQuery.docs.map(element => element.data().fcm_token)
-                    name = _name
+                const docs = currentTurnQuery.docs[0]
+                id = docs.id
+                const {name: _name} = docs.data()
+                fcm_token = currentTurnQuery.docs.map(element => element.data().fcm_token)
+                name = _name
             }
         }else{
             const firstTurnQuery  = await firestore().collection('turns')
@@ -99,7 +87,13 @@ export const AdminScreen = () => {
             fcm_token = firstTurnQuery.docs.map(element => element.data().fcm_token)
         }
         if(currentDocId){
-            sendPushNotification(currentDocId, 'Tu turno ha terminado.')    
+            sendPushNotification(currentDocId, 'Tu turno ha terminado.')
+            firestore()
+                .collection('turns')
+                .doc(currentDocId)
+                .update({
+                    status: status.INACTIVE
+                })
         }
         await firestore()
             .collection('turns')
@@ -112,18 +106,14 @@ export const AdminScreen = () => {
     }
 
     const sendPushNotification  = (fcm_token, message = '¡Es tu turno!') => {
-        // console.log('>>: tokens > ', fcm_token)
         if(Array.isArray(fcm_token)){
-            const current = fcm_token[0]
+            const next = fcm_token[0]
             functions()
-                .httpsCallable('sendPushNotification')({token: current, message})
-                const others = fcm_token.slice(1, fcm_token.length-1)
-                console.log('>>: turns > ', fcm_token)
-                console.log('>>: first', current)
-                console.log('>>: others > ', others)
+                .httpsCallable('sendPushNotification')({token: next, message})
+            const others = fcm_token.slice(1, fcm_token.length)
                 others.forEach((element, i) => {
                     functions()
-                    .httpsCallable('sendPushNotification')({token: element, message: '¡Ya casi! Quedan '+(i)+' turnos delante de ti'})
+                        .httpsCallable('sendPushNotification')({token: element, message: '¡Ya casi! Quedan '+(i+1)+' turnos delante de ti'})
                 })
         }else{
             functions()
