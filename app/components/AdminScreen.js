@@ -66,7 +66,7 @@ export const AdminScreen = () => {
                 .where('turn_id', '>=', currentTurn)
                 .limit(5)
                 .get()
-            if(currentTurnQuery?.docs?.[0]){
+            if(!!currentTurnQuery?.docs?.length){
                 const {id: currentTurnId} = currentTurnQuery.docs[0]
                 await firestore()
                     .collection('turns')

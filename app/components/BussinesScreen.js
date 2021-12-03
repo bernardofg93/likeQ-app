@@ -16,9 +16,10 @@ export const BussinesScreen = () => {
     const [refreshing, setRefreshing] = useState(false)
     const [visible, setVisible] = useState(false)
     const [form, setForm] = useState(defaultFormState)
-    const {currentTurn, waitingQueue, fcmToken} = useSelector(({waitingQueue,currentTurn, fcmToken}) => {
+    const {currentTurn, myTurn, fcmToken, waitingQueue} = useSelector(({waitingQueue, myTurn, currentTurn, fcmToken}) => {
         return {
             waitingQueue,
+            myTurn,
             currentTurn,
             fcmToken
         }
@@ -26,15 +27,20 @@ export const BussinesScreen = () => {
     const load = async () => {
         try {
             setRefreshing(true)
-            const myTurn = await firestore().collection('turns')
-                .where('status', '==', status.ACTIVE)
-                .where('email', '==', form.email || user.email)
-                .limit(1)
-                .get()
-            if(myTurn.docs){
-                const turn = myTurn.docs[0].data().turn_id
-                setMyTurn(turn)
-                setTitleButton('Cancelar Turno')
+            if(!!form?.email || user?.email){
+                const _myTurn = await firestore().collection('turns')
+                    .where('status', '==', status.ACTIVE)
+                    .where('email', '==', form.email || user.email)
+                    .limit(1)
+                    .get()
+                if(!!_myTurn.docs?.length){
+                    const turn = _myTurn.docs[0].data().turn_id
+                    dispatch({
+                        type: 'SET_MY_TURN',
+                        payload: parseInt(turn)
+                    })
+                    setTitleButton('Cancelar Turno')
+                }
             }
         } catch (error) {
             console.log('>>: error > ', error)
@@ -44,11 +50,13 @@ export const BussinesScreen = () => {
     }
     useEffect(() => {
         load()
-    }, []);
+        if(!myTurn){
+            setTitleButton('Pedir Turno')
+        }
+    }, [myTurn]);
 
     const dispatch = useDispatch()
     const [label, setLabel] = useState('Turnos por esperar');
-    const [myTurn, setMyTurn] = useState(0)
     const [titleButton, setTitleButton] = useState('Pedir Turno')
 
 
@@ -61,8 +69,12 @@ export const BussinesScreen = () => {
     }
     const onSubmit = async () => {
         try {
+            if(!form?.email?.includes('@')){
+                Alert.alert('El correo debe contener un @')
+                return false
+            }
             setRefreshing(true)
-            if((!!form.email || !!user && !!user.email)  && fcmToken){
+            if((!!form.email || !!user?.email)  && fcmToken){
                 const lastItemQuery = await firestore().collection('turns')
                     .orderBy('turn_id', 'desc')
                     .limit(1)
@@ -83,7 +95,10 @@ export const BussinesScreen = () => {
                         .add(values)    
                         .then(query => {
                             const {id} = query
-                            setMyTurn(currentId)
+                            dispatch({
+                                type: 'SET_MY_TURN',
+                                payload: currentId
+                            })
                             setTitleButton('Cancelar Turno')
                             dispatch({
                                 type: 'SET_USER',
@@ -123,7 +138,10 @@ export const BussinesScreen = () => {
                     status: status.INACTIVE
                 })
                 .then(() => {
-                    setMyTurn(0)
+                    dispatch({
+                        type: 'SET_MY_TURN',
+                        payload: 0
+                    })
                     setTitleButton('Pedir Turno')
                     setRefreshing(false)
                 });
@@ -147,10 +165,6 @@ export const BussinesScreen = () => {
         )
     }
     const handleChange = (key, value: string) => {
-        if(key === 'email' && !value.includes('@')){
-            Alert.alert('El correo debe contener un @')
-            return false
-        }
         const _form = {
             ... form,
             [key]: value
@@ -203,21 +217,35 @@ export const BussinesScreen = () => {
                 />}
             >
                 <View style={bussinesScreenStyles.content}>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            paddingHorizontal: 10
+                        }}
+                    >
+                        <WaitingQueueComponent
+                            label={label}
+                            waitTurn={waitingQueue || 0}
+                            styleBox={bussinesScreenStyles.boxTurn}
+                            styleTitle={bussinesScreenStyles.titleTurn}
+                            styleNumber={bussinesScreenStyles.numberTurn}
+                        />
 
-                    <WaitingQueueComponent
-                        label = {label}
-                        waitTurn = {waitingQueue-1}
-                        styleBox = {bussinesScreenStyles.boxTurn}
-                        styleTitle = {bussinesScreenStyles.titleTurn}
-                        styleNumber = {bussinesScreenStyles.numberTurn}
-                    />
-
+                        <View style={bussinesScreenStyles.boxTurn}>
+                            <Text style={bussinesScreenStyles.titleTurn}>
+                                Tu turno
+                            </Text>
+                            <Text style={bussinesScreenStyles.numberTurn}>
+                                {myTurn || '- -'}
+                            </Text>
+                        </View>
+                    </View>
                     <View style={bussinesScreenStyles.boxTurn}>
                         <Text style={bussinesScreenStyles.titleTurn}>
-                            Tu turno
+                            Turno Actual
                         </Text>
                         <Text style={bussinesScreenStyles.numberTurn}>
-                            {myTurn || '- -'}
+                            {currentTurn || 0}
                         </Text>
                     </View>
 

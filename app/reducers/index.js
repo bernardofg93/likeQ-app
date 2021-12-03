@@ -5,7 +5,9 @@ import currentTurn from './CurrentTurn'
 import user from './User'
 import fcmToken from './FcmToken'
 import currentDocId from './CurrentDocId'
+import myTurn from './MyTurn'
 export const rootReducer =  combineReducers({
+    myTurn,
     fcmToken,
     user,
     waitingQueue,
