@@ -214,7 +214,7 @@ export const BussinesScreen = () => {
                     >
                         <WaitingQueueComponent
                             label={label}
-                            waitTurn={waitingQueue-1 || 0}
+                            waitTurn={myTurn && currentTurn ? myTurn - currentTurn : 0}
                             styleBox={bussinesScreenStyles.boxTurn}
                             styleTitle={bussinesScreenStyles.titleTurn}
                             styleNumber={bussinesScreenStyles.numberTurn}
