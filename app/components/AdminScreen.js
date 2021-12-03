@@ -119,8 +119,8 @@ export const AdminScreen = () => {
                 .httpsCallable('sendPushNotification')({token: current, message})
                 const others = fcm_token.slice(1, fcm_token.length-1)
                 // console.log('>>: turns > ', fcm_token)
-                // console.log('>>: first', current)
-                // console.log('>>: others > ', others)
+                console.log('>>: first', current)
+                console.log('>>: others > ', others)
                 others.forEach((element, i) => {
                     functions()
                     .httpsCallable('sendPushNotification')({token: element, message: '¡Ya casi! Quedan '+(i+1)+' turnos delante de ti'})

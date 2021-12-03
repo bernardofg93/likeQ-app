@@ -4,7 +4,6 @@ import { Text, View, TouchableOpacity } from 'react-native';
 import homeStyles from '../styles/homeStyles';
 
 export const Home = () => {
-
     const navigation = useNavigation();
 
     return (
@@ -15,12 +14,11 @@ export const Home = () => {
             >
                 <Text>Usuario</Text>
             </TouchableOpacity>
-
-            {/* <TouchableOpacity
+            <TouchableOpacity
                 onPress={() => navigation.navigate('Administrador')}
             >
                 <Text>Administrador</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </View>
     )
 }

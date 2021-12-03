@@ -7,6 +7,7 @@ import fcmToken from './FcmToken'
 import currentDocId from './CurrentDocId'
 import myTurn from './MyTurn'
 export const rootReducer =  combineReducers({
+    isAdmin: true,
     myTurn,
     fcmToken,
     user,

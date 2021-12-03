@@ -28,6 +28,7 @@ const App = () => {
 
         return unsubscribe;
     })
+    const isAdmin = true
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
