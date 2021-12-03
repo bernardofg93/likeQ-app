@@ -15,7 +15,7 @@ export const WaitingQueueComponent = (props) => {
             .where('status', '==', status.ACTIVE)
             .onSnapshot(query => {
                 const turns = query.docs
-                if(!turns.some(element => element.turn_id === currentTurn)){
+                if(currentTurn && !turns.some(element => element.turn_id === currentTurn)){
                     dispatch({
                         type: 'SET_ACTUAL_TURN',
                         payload: 0
@@ -80,7 +80,7 @@ export const WaitingQueueComponent = (props) => {
                     {props.label}
                 </Text>
                 <Text style={props.styleNumber}>
-                    {props.waitTurn > 0 ? props.waitTurn : 0}
+                    {props.waitTurn > 0 ? props.waitTurn : '- -'}
                 </Text>
             </View>
         </>
