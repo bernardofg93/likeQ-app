@@ -12,13 +12,13 @@ export const Home = () => {
             <TouchableOpacity
                 onPress={() => navigation.navigate('Negocio')}
             >
-                <Text>Usuario</Text>
+                <Text>Entrar</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => navigation.navigate('Administrador')}
             >
                 <Text>Administrador</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
