@@ -52,6 +52,7 @@ export const BussinesScreen = () => {
         load()
         if(!myTurn){
             setTitleButton('Pedir Turno')
+            getCurrentTurnIfMine()
         }
     }, [myTurn]);
 
@@ -150,6 +151,30 @@ export const BussinesScreen = () => {
         }
     }
 
+    const getCurrentTurnIfMine = () => {
+        const turnArray = firestore()
+            .collection('turns')
+            .where('status', '==', status.IN_PROGRESS)
+            .where('fcm_token', '==', fcmToken)
+            .limit(1)
+            .onSnapshot(query => {
+                const data = query?.docs?.[0]?.data()
+                if(!!data){
+                    dispatch({
+                        type: 'SET_MY_TURN',
+                        payload: data.turn_id
+                    })
+                    setTitleButton('Cancelar Turno')
+                } else {
+                    dispatch({
+                        type: 'SET_MY_TURN',
+                        payload: 0
+                    })
+                    setTitleButton('Pedir Turno')
+                }
+            })
+    }
+
     const showAlert = () => {
         Alert.alert(
             'Atención',
@@ -225,14 +250,14 @@ export const BussinesScreen = () => {
                     >
                         <WaitingQueueComponent
                             label={label}
-                            waitTurn={waitingQueue || 0}
+                            waitTurn={waitingQueue-1 || 0}
                             styleBox={bussinesScreenStyles.boxTurn}
                             styleTitle={bussinesScreenStyles.titleTurn}
                             styleNumber={bussinesScreenStyles.numberTurn}
                             isUser
                         />
-
-                        <View style={bussinesScreenStyles.boxTurn}>
+                    </View>
+                    <View style={bussinesScreenStyles.boxTurn}>
                             <Text style={bussinesScreenStyles.titleTurn}>
                                 Tu turno
                             </Text>
@@ -240,15 +265,14 @@ export const BussinesScreen = () => {
                                 {myTurn || '- -'}
                             </Text>
                         </View>
-                    </View>
-                    <View style={bussinesScreenStyles.boxTurn}>
+                    {/* <View style={bussinesScreenStyles.boxTurn}>
                         <Text style={bussinesScreenStyles.titleTurn}>
                             Turno Actual
                         </Text>
                         <Text style={bussinesScreenStyles.numberTurn}>
                             {currentTurn || 0}
                         </Text>
-                    </View>
+                    </View> */}
 
                     <TouchableOpacity
                         style={bussinesScreenStyles.cancelTurn}
